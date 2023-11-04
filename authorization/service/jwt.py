@@ -33,3 +33,28 @@ class JWTService:
         return user
     
 
+    async def get_user_refresh_token(self, user_data: dict = None, user_id: str = None) -> str:
+        """
+        returns the refresh_token if the cached key is not timed out.
+        If it's timedout then the user needs to login again
+        """
+
+        if user_data:
+            uid = f"user_{user_data['id']}"
+            id = user_data['id']
+        elif user_id:
+            uid = f"user_{user_id}"
+            id = user_id
+
+        all_keys = await self.redis.keys("*")
+        for i in all_keys:
+            x = i.split(" ")
+            if uid == x[0]:
+                exp = await self.redis.get(i)
+                u_uid = x[1]
+
+            return await self.recreate_refresh_token(id, exp, u_uid)
+
+
+    
+
