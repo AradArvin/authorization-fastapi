@@ -71,4 +71,32 @@ async def update_user_profile(request: Request,
 
 
 
+@authorization_router.post("/api/v1/access-token", dependencies=[Depends(JWTBearer(is_refresh=True))], summary="Get new acess token", status_code=status.HTTP_200_OK)
+async def get_access(request: Request, 
+                    token_service: JWTService = Depends()):
+    
+    auth_token = request.headers.get("Authorization")
+
+    try:
+        user_data = await token_service.get_token_user(auth_token)
+    except UserIsNotLoggedInError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User is not logged in")
+
+    try:
+        user_refresh_token = await token_service.get_user_refresh_token(user_data)
+    except UserNotFoundError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found!")
+    
+
+    try:
+        access_token = await token_service.create_access_from_refresh(auth_token, user_refresh_token, user_data)
+        response_data = {
+            "access": access_token,
+        }
+        return response_data
+    except InvalidTokenError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Token!")
+
+
+
 
