@@ -11,3 +11,9 @@ class UserNotFoundError(Error):
         super().__init__(message)
 
 
+class UserIsNotLoggedInError(Error):
+    
+    def __init__(self, message: str = "User is not logged in!") -> None:
+        super().__init__(message)
+
+
