@@ -17,3 +17,9 @@ class UserIsNotLoggedInError(Error):
         super().__init__(message)
 
 
+class InvalidTokenError(Error):
+    
+    def __init__(self, message: str = "Invalid Token!") -> None:
+        super().__init__(message)
+
+
