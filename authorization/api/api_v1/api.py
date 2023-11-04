@@ -100,3 +100,16 @@ async def get_access(request: Request,
 
 
 
+@authorization_router.post("/api/v1/logout", dependencies=[Depends(JWTBearer())], summary="User Log out", status_code=status.HTTP_200_OK)
+async def logout(request: Request, 
+                 token_service: JWTService = Depends()):
+    
+    token = request.headers.get("Authorization")
+
+    user_data = await token_service.get_token_user(token)
+
+    await token_service.token_deleter(user_data)
+
+    return {"detail": "logged out!"}
+
+
