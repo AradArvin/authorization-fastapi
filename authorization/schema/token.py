@@ -13,3 +13,10 @@ class User(BaseModel):
         populate_by_name = True
 
 
+class UserLogin(BaseModel):
+    _id: str
+    email: EmailStr = Field()
+    password: str = Field()
+
+
+
