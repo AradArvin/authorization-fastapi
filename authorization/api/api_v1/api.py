@@ -23,4 +23,20 @@ async def user_signup(user_id: dict,
 
 
 
+@authorization_router.post(path="/api/v1/login", summary="User Login", response_model=Tokens, status_code=status.HTTP_200_OK)
+async def user_login(user: dict,
+                     token_service: JWTService = Depends(),
+                     setter_service: SetterService = Depends()):
+    
+
+    if await token_service.check_user_token(user) == "expired":
+        await token_service.token_deleter(user)
+
+    
+    response_data = await setter_service.user_token_setter(user["id"])
+
+    return response_data
+
+
+
 
