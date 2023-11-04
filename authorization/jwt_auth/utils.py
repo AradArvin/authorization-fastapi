@@ -36,5 +36,14 @@ async def create_access_token_from_refresh(user_id: str, ref_token_payload: dict
                          expire=expire)
 
 
+async def create_refresh_token(user_id: str) -> str: 
+    return await _create_token(token_type="refresh", 
+                         lifetime=settings.REFRESH_TOKEN_EXPIRE_MINUTES, 
+                         time_unit=settings.REFRESH_TOKEN_TIME_UNIT, 
+                         user_id=user_id, 
+                         jti=jti)
+
+
+
 
 
