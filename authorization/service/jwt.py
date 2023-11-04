@@ -58,3 +58,17 @@ class JWTService:
 
     
 
+    async def recreate_refresh_token(self, user_id, exp, u_uid):
+        """Recreate the cached refresh token."""
+
+        refresh_token = await token_encode({
+            'token_type':'refresh',
+            'user_id':user_id,
+            'exp': exp,
+            'iat': datetime.utcnow(),
+            'jti':u_uid
+        })
+        
+        return refresh_token
+
+
