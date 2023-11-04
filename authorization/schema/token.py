@@ -20,3 +20,9 @@ class UserLogin(BaseModel):
 
 
 
+class UserProfile(BaseModel):
+    username: str | None=None
+    fullname: str | None=None
+    email: EmailStr = Field()
+
+
