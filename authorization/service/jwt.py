@@ -98,3 +98,15 @@ class JWTService:
 
 
 
+    async def create_access_from_refresh(self, auth_token: str, user_token: str, user_data: dict):
+        auth_token = auth_token.split(" ")[1]
+
+        auth_token_payload = await token_decode(auth_token)
+        user_refresh_payload = await token_decode(user_token)
+
+        if auth_token_payload["user_id"] != auth_token_payload["user_id"] and auth_token_payload["jti"] != auth_token_payload["jti"]:
+            raise InvalidTokenError
+
+        access_token = await create_access_token_from_refresh(user_id=user_data["id"], ref_token_payload=user_refresh_payload)
+
+        return access_token
