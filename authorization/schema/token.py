@@ -35,3 +35,7 @@ class UpdateProfile(BaseModel):
 
 
 
+
+class Tokens(BaseModel):
+    access: str = Field()
+    refresh: str = Field()
