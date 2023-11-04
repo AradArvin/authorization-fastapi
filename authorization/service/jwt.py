@@ -72,3 +72,17 @@ class JWTService:
         return refresh_token
 
 
+
+    async def check_user_token(self, user_data: dict):
+        token = await self.get_user_refresh_token(user_data=user_data)
+
+        if token is None:
+            return
+        
+        try:
+            await token_decode(token)
+        except jwt.exceptions.ExpiredSignatureError:
+            return "expired"
+        
+
+
