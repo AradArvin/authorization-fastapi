@@ -12,3 +12,15 @@ authorization_router = APIRouter()
 
 
 
+@authorization_router.post(path="/api/v1/signup", summary="User Signup", response_model=Tokens, status_code=status.HTTP_200_OK)
+async def user_signup(user_id: dict, 
+                      setter_service: SetterService = Depends(),):
+
+    response_data = await setter_service.user_token_setter(user_id.get("id", None))
+
+    return response_data
+
+
+
+
+
