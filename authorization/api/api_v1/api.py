@@ -40,3 +40,15 @@ async def user_login(user: dict,
 
 
 
+@authorization_router.post("/api/v1/profile", dependencies=[Depends(JWTBearer())], summary="See user profile",response_model=UserProfile, status_code=status.HTTP_200_OK)
+async def user_profile(request: Request, token_service: JWTService = Depends()):
+    token = request.headers.get("Authorization")
+
+    user = await token_service.get_token_user(token)
+
+    return user
+
+
+
+
+
