@@ -31,3 +31,23 @@ class SetterService:
     
 
 
+    async def key_setter(self, refresh_token_payload: dict):
+        """Check for duplicate keys and delete them from redis when found."""
+
+        jti = refresh_token_payload["jti"]
+        id = refresh_token_payload["user_id"]
+        key = f"user_{id} {jti}"
+        uid = key.split(" ")
+
+        all_keys = await self.redis.keys("*")
+    
+        for i in all_keys:
+            x = i.split(" ")
+            if uid[0] == x[0]:
+                await self.redis.delete(i)
+
+        exp = refresh_token_payload["exp"]
+        iat = refresh_token_payload["iat"]
+        timeout = exp - iat
+
+        await self.redis.set(name=key, value=exp, ex=timeout)
