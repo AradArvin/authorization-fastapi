@@ -14,5 +14,13 @@ def gen_jti():
 jti = gen_jti()
 
 
+async def create_access_token(user_id: str) -> str: 
+    return await _create_token(token_type="access", 
+                         lifetime=settings.ACCESS_TOKEN_EXPIRE_MINUTES, 
+                         time_unit=settings.ACCESS_TOKEN_TIME_UNIT, 
+                         user_id=user_id, 
+                         jti=jti)
+
+
 
 
