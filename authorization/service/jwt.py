@@ -86,3 +86,15 @@ class JWTService:
         
 
 
+    async def token_deleter(self, user_data: dict):
+        """Checkes if a user has refresh token and then deletes it."""
+
+        uid = f"user_{user_data['id']}"
+        all_keys = await self.redis.keys("*")
+        for i in all_keys:
+            x = i.split(" ")
+            if uid == x[0]:
+                await self.redis.delete(i)
+
+
+
