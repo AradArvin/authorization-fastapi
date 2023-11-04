@@ -58,5 +58,21 @@ async def token_exp_time(time_unit: str, lifetime: int):
     return expire
 
 
+async def _create_token(token_type: str, user_id: str, jti: str, lifetime: int = None, time_unit: str = None, expire = None) -> str:
+    payload = dict()
+    if not expire:
+        exp = await token_exp_time(time_unit, lifetime)
+    else:
+        exp = expire
+    payload["type"] = token_type
+    payload["user_id"] = str(user_id)
+    payload["exp"] = exp 
+    payload["iat"] = datetime.utcnow() 
+    payload["jti"] = jti
+
+    return await token_encode(payload)
+
+
+
 
 
