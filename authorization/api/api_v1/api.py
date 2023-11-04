@@ -51,4 +51,24 @@ async def user_profile(request: Request, token_service: JWTService = Depends()):
 
 
 
+@authorization_router.put("/api/v1/update-profile", dependencies=[Depends(JWTBearer())], summary="Update user profile", response_model=UpdateProfile, status_code=status.HTTP_200_OK)
+async def update_user_profile(request: Request, 
+                              entered_data: UpdateProfile = Body(),
+                              token_service: JWTService = Depends()):
+    
+    token = request.headers.get("Authorization")
+
+    entered_data = jsonable_encoder(entered_data)
+
+    user_data = await token_service.get_token_user(token)
+
+    data = {"user_data": user_data, "entered_data": entered_data}
+
+    updated_user_data = await httpx_response_mongodb_data_update("api/v1/mongodb-update", data)
+
+    return updated_user_data
+
+
+
+
 
