@@ -74,5 +74,13 @@ async def _create_token(token_type: str, user_id: str, jti: str, lifetime: int =
 
 
 
+async def token_encode(payload: dict):
+    """Encode tokens based on HS256 algorithm"""
+
+    token = jwt.encode(payload=payload, key=settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
+    return token
+
+
+
 
 
