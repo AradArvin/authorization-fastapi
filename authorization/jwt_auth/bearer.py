@@ -5,3 +5,6 @@ import jwt
 
 
 
+# Bearer Token
+class JWTBearer(HTTPBearer):
+
