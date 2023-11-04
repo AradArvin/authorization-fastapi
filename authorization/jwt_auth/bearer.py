@@ -28,4 +28,22 @@ class JWTBearer(HTTPBearer):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authorization code.")
 
 
+    async def verify_jwt(self, jwtoken: str) -> bool:
+        try:
+            payload = await token_decode(jwtoken)
+            
+            if self.is_refresh:
+                if payload["type"] != "refresh":
+                    return "invalid"
+                else:
+                    return
+                
+            if payload["type"] != "access":
+                return "invalid"
+            
+        except jwt.exceptions.DecodeError:
+            return "invalid"
+        except jwt.ExpiredSignatureError:
+            return "expired"
+    
 
