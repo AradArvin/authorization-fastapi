@@ -45,5 +45,18 @@ async def create_refresh_token(user_id: str) -> str:
 
 
 
+async def token_exp_time(time_unit: str, lifetime: int):
+    if time_unit == "seconds":
+        expire = datetime.utcnow() + timedelta(seconds=lifetime)
+    elif time_unit == "minutes":
+        expire = datetime.utcnow() + timedelta(minutes=lifetime)
+    elif time_unit == "hours":
+        expire = datetime.utcnow() + timedelta(hours=lifetime)
+    elif time_unit == "days":
+        expire = datetime.utcnow() + timedelta(days=lifetime)
+    
+    return expire
+
+
 
 
