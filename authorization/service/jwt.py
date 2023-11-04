@@ -15,3 +15,21 @@ class JWTService:
 
 
 
+    async def get_token_user(self, token: str) -> dict:
+
+        token = token.split(" ")[1]
+
+        payload = await token_decode(token)
+        user_id = payload["user_id"]
+
+        try:
+            await self.get_user_refresh_token(user_id=user_id)
+        except:
+            raise UserIsNotLoggedInError
+        
+        user_id_dict = {"id": user_id}
+        user = await httpx_response_mongodb_data("api/v1/mongodb", user_id_dict)
+
+        return user
+    
+
