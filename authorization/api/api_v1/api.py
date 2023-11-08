@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Body, status, HTTPException, Header, Depends, Request
 from fastapi.encoders import jsonable_encoder
+from starlette.responses import JSONResponse
+
 
 from schema.token import *
 from service.jwt import JWTService
@@ -7,6 +9,8 @@ from service.setter import SetterService
 from jwt_auth.bearer import JWTBearer
 from exception.exception import *
 from connection.httpx_manager import httpx_response_mongodb_data_update
+
+
 
 authorization_router = APIRouter()
 
@@ -53,12 +57,11 @@ async def user_profile(request: Request, token_service: JWTService = Depends()):
 
 @authorization_router.put("/api/v1/update-profile", dependencies=[Depends(JWTBearer())], summary="Update user profile", response_model=UpdateProfile, status_code=status.HTTP_200_OK)
 async def update_user_profile(request: Request, 
-                              entered_data: UpdateProfile = Body(),
+                              entered_data: dict,
                               token_service: JWTService = Depends()):
     
     token = request.headers.get("Authorization")
 
-    entered_data = jsonable_encoder(entered_data)
 
     user_data = await token_service.get_token_user(token)
 
@@ -113,3 +116,16 @@ async def logout(request: Request,
     return {"detail": "logged out!"}
 
 
+
+@authorization_router.post(path="/api/v1/check-login", summary="check if user is logged in")
+async def check_login(request: Request,
+                     token_service: JWTService = Depends(),):
+    
+    token = request.headers.get("Authorization")
+
+    user_data = await token_service.get_token_user(token)
+
+    if user_data.get("id", None) != None:
+        return JSONResponse(status_code=status.HTTP_200_OK, content={"status": "logged_in"})
+    else:
+        return JSONResponse(status_code=status.HTTP_200_OK, content={"status": "not_logged_in"})
