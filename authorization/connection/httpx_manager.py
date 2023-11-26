@@ -3,6 +3,8 @@ from core import settings
 
 
 
+# HTTP_X requests to other fastapi appes in order to send or recive json data
+
 async def httpx_response(account_endpoint: str, data: dict = None):
 
     async with httpx.AsyncClient() as client:

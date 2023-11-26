@@ -1,4 +1,4 @@
-
+# Basic exeptions used in app to raise proper errors. and cach them later to increase readablity.
 
 class Error(Exception):
     pass

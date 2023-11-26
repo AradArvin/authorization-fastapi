@@ -16,6 +16,10 @@ class JWTService:
 
 
     async def get_token_user(self, token: str) -> dict:
+        """
+        Takes a token as argument and after sending a http_x request to account app 
+        containing user_id to check for user data, returnes the user data.
+        """
 
         token = token.split(" ")[1]
 
@@ -35,8 +39,8 @@ class JWTService:
 
     async def get_user_refresh_token(self, user_data: dict = None, user_id: str = None) -> str:
         """
-        returns the refresh_token if the cached key is not timed out.
-        If it's timedout then the user needs to login again
+        returns the recreated refresh_token if the cached key is not timed out.
+        the recreation of refresh token needs user_id, exp, jti(u_uid).
         """
 
         if user_data:
@@ -59,7 +63,9 @@ class JWTService:
     
 
     async def recreate_refresh_token(self, user_id, exp, u_uid):
-        """Recreate the cached refresh token."""
+        """
+        Recreate the refresh token from redis cached data.
+        """
 
         refresh_token = await token_encode({
             'token_type':'refresh',
@@ -74,6 +80,9 @@ class JWTService:
 
 
     async def check_user_token(self, user_data: dict):
+        """
+        Check the existance of a token in redis. and handels the data return.
+        """
         token = await self.get_user_refresh_token(user_data=user_data)
 
         if token is None:
@@ -87,7 +96,10 @@ class JWTService:
 
 
     async def token_deleter(self, user_data: dict):
-        """Checkes if a user has refresh token and then deletes it."""
+        """
+        Check if a user has refresh token and then deletes it. 
+        it is equal to logging out a user.
+        """
 
         uid = f"user_{user_data['id']}"
         all_keys = await self.redis.keys("*")
@@ -99,6 +111,9 @@ class JWTService:
 
 
     async def create_access_from_refresh(self, auth_token: str, user_token: str, user_data: dict):
+        """
+        Creates an access token from the cached user data. 
+        """
         auth_token = auth_token.split(" ")[1]
 
         auth_token_payload = await token_decode(auth_token)

@@ -4,7 +4,7 @@ from jwt_auth.utils import *
 from exception.exception import *
 
 
-
+# A service to create jwt tokens and set refresh token for user
 class SetterService:
 
     HOST_ADDRESS: str = settings.REDIS_HOST_ADDRESS
@@ -15,6 +15,10 @@ class SetterService:
 
 
     async def user_token_setter(self, user_id: ObjectId):
+        """
+        Async method to create tokens for user and then set the login data in
+        redis useing key setter method. 
+        """
         access_token = await create_access_token(user_id)
         refresh_token = await create_refresh_token(user_id)
 
@@ -32,7 +36,10 @@ class SetterService:
 
 
     async def key_setter(self, refresh_token_payload: dict):
-        """Check for duplicate keys and delete them from redis when found."""
+        """
+        Check for duplicate keys and delete them from redis when found. then sets a key
+        containing token payload data. key(user_id, jti), value(exp).
+        """
 
         jti = refresh_token_payload["jti"]
         id = refresh_token_payload["user_id"]

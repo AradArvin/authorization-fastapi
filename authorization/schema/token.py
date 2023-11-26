@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, EmailStr
 
 
+# Schemas for mongodb document design and a way to know the data structure for each document.
 
 class User(BaseModel):
     _id: str
